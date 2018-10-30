@@ -156,7 +156,7 @@ def main():
     elif args.dataset == "keypoints_coco2017":
         cfg.TRAIN.DATASETS = ('keypoints_coco_2017_train',)
         cfg.MODEL.NUM_CLASSES = 2
-    elif args.dataset == "pens_train":
+    elif args.dataset == "pens":
         cfg.TRAIN.DATASETS = ('pens_train',)
         cfg.MODEL.NUM_CLASSES = 2
     else:
@@ -170,8 +170,10 @@ def main():
     original_batch_size = cfg.NUM_GPUS * cfg.TRAIN.IMS_PER_BATCH
     original_ims_per_batch = cfg.TRAIN.IMS_PER_BATCH
     original_num_gpus = cfg.NUM_GPUS
+
     if args.batch_size is None:
         args.batch_size = original_batch_size
+
     cfg.NUM_GPUS = torch.cuda.device_count()
     assert (args.batch_size % cfg.NUM_GPUS) == 0, \
         'batch_size: %d, NUM_GPUS: %d' % (args.batch_size, cfg.NUM_GPUS)
