@@ -21,6 +21,24 @@ def load_detectron_weight(net, detectron_weight_file):
             p_tensor.copy_(torch.Tensor(src_blobs[d_name]))
 
 
+def load_detectron_weight_cut(net, detectron_weight_file, exclude=[]):
+    name_mapping, orphan_in_detectron = net.detectron_weight_mapping
+
+    with open(detectron_weight_file, 'rb') as fp:
+        src_blobs = pickle.load(fp, encoding='latin1')
+    if 'blobs' in src_blobs:
+        src_blobs = src_blobs['blobs']
+
+    params = net.state_dict()
+    for p_name, p_tensor in params.items():
+        d_name = name_mapping[p_name]
+        if isinstance(d_name, str) and not d_name in exclude:  # maybe str, None or True
+            #print(d_name)
+            p_tensor.copy_(torch.Tensor(src_blobs[d_name]))
+
+
+
+
 def resnet_weights_name_pattern():
     pattern = re.compile(r"conv1_w|conv1_gn_[sb]|res_conv1_.+|res\d+_\d+_.+")
     return pattern
