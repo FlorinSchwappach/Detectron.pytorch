@@ -219,15 +219,15 @@ DATASETS = {
     },
     'pens_train': {
         IM_DIR:
-            _DATA_DIR + '/pens/images/train',
+            _DATA_DIR + '/pens_train/images',
         ANN_FN:
-            _DATA_DIR + '/pens/annotations/pens_train.json'
+            _DATA_DIR + '/pens_train/annotations/pens_train.json'
     },
     'pens_test': {
         IM_DIR:
-            _DATA_DIR + '/pens/images/test',
+            _DATA_DIR + '/pens_test/images',
         ANN_FN:
-            _DATA_DIR + '/pens/annotations/pens_test.json'
+            _DATA_DIR + '/pens_test/annotations/pens_test.json'
     },
     'pens_val': {
         IM_DIR:
