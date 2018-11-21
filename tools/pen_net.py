@@ -75,6 +75,9 @@ def main():
     print('Called with args:')
     print(args)
 
+    if not os.path.isdir(meta_base_dir):
+        os.mkdir(meta_base_dir)
+
     # list all available metainfo configs
     if args.list_meta:
         print(sh.ls(meta_base_dir))
