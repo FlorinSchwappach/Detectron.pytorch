@@ -21,6 +21,7 @@ import coolname
 import uuid
 import os
 import sys
+from subprocess import Popen, PIPE, STDOUT
 
 pkl_dir = os.path.expanduser("~/Detectron.pytorch/data/pretrained_model/mask-models/")
 yaml_dir = os.path.expanduser("~/Detectron.pytorch/configs/baselines/")
@@ -175,6 +176,20 @@ def create_new_net_meta(args):
     return net_meta
 
 
+def run_shell_command(command):
+    my_command = ' '.join([str(x) for x in command])
+    print("Running " + my_command)
+    output = []
+    process = Popen(my_command, stdout=PIPE, stderr=STDOUT, shell=True)
+    while True:
+        retcode = process.poll()
+        line = process.stdout.readline().rstrip().decode('latin-1')
+        yield str(line)
+        if retcode is not None:
+            print("Return Code " + str(retcode))
+            break
+    pass
+
 def run_training(meta):
     script_output = []
     errorlog = open(os.path.join(meta['meta_dir'], "pen_net_error.log"), "w")
@@ -182,26 +197,21 @@ def run_training(meta):
     #sys.stdout = outputlog
     sys.stderr = errorlog
 
-    try:
+    for line in run_shell_command(
+            [tool_dir + "train_net_step.py",
+            "--dataset", "pens",
+            "--cfg", meta['cfg_path'],
+            "--load_detectron", meta['weight_path'],
+            "--use_tfboard",
+            # "--nw", 1,
+            "--set",
+            "OUTPUT_DIR",
+            meta['meta_dir']]):
+        print(line)
+        script_output.append(line)
 
-        for line in sh.python(tool_dir + "train_net_step.py", 
-                "--dataset", "pens", 
-                "--cfg", meta['cfg_path'], 
-                "--load_detectron", meta['weight_path'],
-                "--use_tfboard",
-                #"--nw", 1,
-                "--set",
-                "OUTPUT_DIR",
-                meta['meta_dir'],
-                _out_bufsize = 100):
-            script_output.append(line)
-    except sh.ErrorReturnCode as e:
-       print("An error occurred")
-       print(e.stderr)
-       errorlog.write(e.stderr)
 
     if script_output is not None:
-        print(script_output)
         training_run = {}
         training_run['datetime'] = time.strftime("%c")
         training_run['uuid'] = str(uuid.uuid4())
