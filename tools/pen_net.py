@@ -271,7 +271,7 @@ def run_test(meta, training_uuid=None):
 
     pass
 
-def run_inference(meta_name, image_path):
+def run_pen_inference(meta_name, image_path):
     pass
 
 
