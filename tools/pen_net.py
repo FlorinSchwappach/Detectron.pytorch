@@ -232,7 +232,7 @@ def run_training(meta):
     pass
 
 def run_test(meta, training_uuid=None):
-    script_output = None
+    script_output = []
 
     for line in run_shell_command(
             ["python",
