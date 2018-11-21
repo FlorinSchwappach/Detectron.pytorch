@@ -115,7 +115,7 @@ def _flip_roidb_entry(entry, dataset, flipstyle='h'):
         logger.error("Flipstyle given not recognized.")
 
     firstIndex = 0 + index_mod
-    secondIndex = 0 + index_mod
+    secondIndex = 2 + index_mod
 
     boxes = entry['boxes'].copy()
     olddim1 = boxes[:, firstIndex].copy()
