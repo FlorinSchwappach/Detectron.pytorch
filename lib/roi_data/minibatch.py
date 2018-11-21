@@ -65,8 +65,10 @@ def _get_image_blob(roidb):
         # # flip the channel, since the original one using cv2
         # # rgb -> bgr
         # im = im[:, :, ::-1]
-        if roidb[i]['flipped']:
+        if roidb[i]['flipped_h']:
             im = im[:, ::-1, :]
+        if roidb[i]['flipped_v']:
+            im = im[::-1, :, :]
         target_size = cfg.TRAIN.SCALES[scale_inds[i]]
         im, im_scale = blob_utils.prep_im_for_blob(
             im, cfg.PIXEL_MEANS, [target_size], cfg.TRAIN.MAX_SIZE)

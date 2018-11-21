@@ -139,14 +139,15 @@ def _flip_roidb_entry(entry, dataset, flipstyle='h'):
                 dataset.keypoints, dataset.keypoint_flip_map,
                 entry['gt_keypoints'], entry['width']
             )
+        flipped_entry['flipped_h'] = True
     elif flipstyle == 'v':
         flipped_entry['segms'] = segm_utils.flip_segms_vertical(
             entry['segms'], entry['height'], entry['width']
         )
         if dataset.keypoints is not None:
             logger.info("Keypoints are present in dataset, but vertical flip augmentation is not implemented for them. Possible dataset problem.")
+        flipped_entry['flipped_v'] = True
 
-    flipped_entry['flipped'] = True
     return flipped_entry
 
 
