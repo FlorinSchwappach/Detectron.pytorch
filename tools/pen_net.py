@@ -198,7 +198,8 @@ def run_training(meta):
     sys.stderr = errorlog
 
     for line in run_shell_command(
-            [tool_dir + "train_net_step.py",
+            ["python",
+            tool_dir + "train_net_step.py",
             "--dataset", "pens",
             "--cfg", meta['cfg_path'],
             "--load_detectron", meta['weight_path'],
