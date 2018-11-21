@@ -234,22 +234,21 @@ def run_training(meta):
 def run_test(meta, training_uuid=None):
     script_output = None
 
-    try:
-        for line in sh.python(tool_dir + "test_net.py", 
-                "--dataset", "pens", 
-                "--cfg", meta['cfg_path'], 
-                "--load_detectron", meta['weight_path'],
-                "--multi-gpu-testing"):
-            script_output.append(line)
-        #output = sh.python("./pen_net.py", "--mode", "test")
-    except sh.ErrorReturnCode as e:
-        print("An error occurred")
-        with open(os.path.join(meta['meta_dir'], 'error.log', 'w')) as errorfile:
-            errorfile.write(e.stderr)
-        errorfile.close()
+    for line in run_shell_command(
+            ["python",
+             tool_dir + "test_net.py",
+             "--dataset", "pens",
+             "--cfg", meta['cfg_path'],
+             "--load_detectron", meta['weight_path'],
+             "--multi-gpu-testing"]):
+        print(line)
+        script_output.append(line)
+
+        #with open(os.path.join(meta['meta_dir'], 'error.log', 'w')) as errorfile:
+        #    errorfile.write(e.stderr)
+        #errorfile.close()
 
     if script_output is not None:
-        print(script_output)
         test_run = {}
         test_run['datetime'] = time.strftime("%c")
         test_run['uuid'] = str(uuid.uuid4())
@@ -273,7 +272,8 @@ def run_test(meta, training_uuid=None):
 
     pass
 
-
+def run_inference(meta_name, image_path):
+    pass
 
 
 ###############################################################################
