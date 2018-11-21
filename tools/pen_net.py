@@ -240,7 +240,8 @@ def run_test(meta, training_uuid=None):
              "--dataset", "pens",
              "--cfg", meta['cfg_path'],
              "--load_detectron", meta['weight_path'],
-             "--multi-gpu-testing"]):
+             "--multi-gpu-testing",
+             "--output_dir", meta['meta_dir']]):
         print(line)
         script_output.append(line)
 
@@ -252,14 +253,12 @@ def run_test(meta, training_uuid=None):
         test_run = {}
         test_run['datetime'] = time.strftime("%c")
         test_run['uuid'] = str(uuid.uuid4())
+        test_run['logs'] = []
 
         if training_uuid is not None:
             test_run['linked_training_run'] = training_uuid
 
-        if test_run['logs'] is None:
-            test_run['logs'] = [script_output]
-        else:
-            test_run['logs'].append(script_output)
+        test_run['logs'].append(script_output)
 
         meta['test_runs'].append(test_run)
 
