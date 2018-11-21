@@ -88,21 +88,49 @@ def extend_with_flipped_entries(roidb, dataset):
     "Flipping" an entry means that that image and associated metadata (e.g.,
     ground truth boxes and object proposals) are horizontally flipped.
     """
+
+    """ Additional vertical flipping of polygonal masks added. Only bboxes and
+    segmentations are flipped. Keypoints etc. are not.
+    """
+
     flipped_roidb = []
     for entry in roidb:
-        width = entry['width']
-        boxes = entry['boxes'].copy()
-        oldx1 = boxes[:, 0].copy()
-        oldx2 = boxes[:, 2].copy()
-        boxes[:, 0] = width - oldx2 - 1
-        boxes[:, 2] = width - oldx1 - 1
-        assert (boxes[:, 2] >= boxes[:, 0]).all()
-        flipped_entry = {}
-        dont_copy = ('boxes', 'segms', 'gt_keypoints', 'flipped')
-        for k, v in entry.items():
-            if k not in dont_copy:
-                flipped_entry[k] = v
-        flipped_entry['boxes'] = boxes
+        flipped_entry_h = _flip_roidb_entry(entry, dataset, flipstyle='h')
+        flipped_roidb.append(flipped_entry_h)
+        flipped_entry_v = _flip_roidb_entry(entry, dataset, flipstyle='v')
+        flipped_roidb.append(flipped_entry_v)
+    roidb.extend(flipped_roidb)
+
+    pass
+
+def _flip_roidb_entry(entry, dataset, flipstyle='h'):
+    index_mod = 0
+    relevant_dimension = 0
+    if flipstyle == 'h':
+        relevant_dimension = entry['width']
+    elif flipstyle == 'v':
+        relevant_dimension = entry['height']
+        index_mod = 1
+    else:
+        logger.error("Flipstyle given not recognized.")
+
+    firstIndex = 0 + index_mod
+    secondIndex = 0 + index_mod
+
+    boxes = entry['boxes'].copy()
+    olddim1 = boxes[:, firstIndex].copy()
+    olddim2 = boxes[:, secondIndex].copy()
+    boxes[:, firstIndex] = relevant_dimension - olddim2 - 1
+    boxes[:, secondIndex] = relevant_dimension - olddim1 - 1
+    assert (boxes[:, secondIndex] >= boxes[:, firstIndex]).all()
+    flipped_entry = {}
+    dont_copy = ('boxes', 'segms', 'gt_keypoints', 'flipped')
+    for k, v in entry.items():
+        if k not in dont_copy:
+            flipped_entry[k] = v
+    flipped_entry['boxes'] = boxes
+
+    if flipstyle == 'h':
         flipped_entry['segms'] = segm_utils.flip_segms(
             entry['segms'], entry['height'], entry['width']
         )
@@ -111,9 +139,15 @@ def extend_with_flipped_entries(roidb, dataset):
                 dataset.keypoints, dataset.keypoint_flip_map,
                 entry['gt_keypoints'], entry['width']
             )
-        flipped_entry['flipped'] = True
-        flipped_roidb.append(flipped_entry)
-    roidb.extend(flipped_roidb)
+    elif flipstyle == 'v':
+        flipped_entry['segms'] = segm_utils.flip_segms_vertical(
+            entry['segms'], entry['height'], entry['width']
+        )
+        if dataset.keypoints is not None:
+            logger.info("Keypoints are present in dataset, but vertical flip augmentation is not implemented for them. Possible dataset problem.")
+
+    flipped_entry['flipped'] = True
+    return flipped_entry
 
 
 def filter_for_training(roidb):
