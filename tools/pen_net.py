@@ -216,9 +216,27 @@ def run_training(meta):
         training_run = {}
         training_run['datetime'] = time.strftime("%c")
         training_run['uuid'] = str(uuid.uuid4())
-        training_run['logs'] = []
+        training_run['logs'] = [script_output]
+
+        output_path = _extract_training_output_paths(script_output)
+        split_path = os.path.split(output_path)
+        step_name = split_path[-3]
+
+        path_to_step_dir = os.path.join(meta['net_name'], step_name)
+        files_in_step_dir = os.listdir(path_to_step_dir)
+
+        # extract name of tensorboard logfile
+        logfile = ""
+        for filename in files_in_step_dir:
+            if 'tfevents' in filename:
+                logfile = filename
+                break
+
+        training_run['tf_logfile'] = os.path.join(path_to_step_dir, logfile)
+        training_run['ckpt_path'] = output_path
 
         meta['training_runs'].append(training_run)
+        meta['latest_training_run'] = training_run['uuid']
 
         meta_filename = os.path.join(meta_base_dir, meta['net_name'], meta['net_name'] + '.json')
         save_meta(meta_filename, meta)
@@ -231,15 +249,37 @@ def run_training(meta):
 
     pass
 
+def _extract_training_output_paths(script_output):
+    output_string = ''.join(script_output)
+    search_string = 'save model: '
+    wanted_index = output_string.find(search_string)
+    if wanted_index == -1:
+        print("Error: couldn't find path to training output in script output.")
+        return None
+    output_path = output_string[wanted_index + len(search_string):]
+    return output_path
+
+def _get_latest_training_checkpoint(meta):
+    latest_run = None
+    for run in meta['training_runs']:
+        if run['uuid'] == meta['latest_training_run']:
+            latest_run = run
+            break
+    return latest_run['ckpt_path']
+
 def run_test(meta, training_uuid=None):
     script_output = []
+
+
+    latest_checkpoint = _get_latest_training_checkpoint(meta)
+    ckpt_path = os.path.join(meta['meta_dir'], latest_checkpoint)
 
     for line in run_shell_command(
             ["python",
              tool_dir + "test_net.py",
              "--dataset", "pens",
              "--cfg", meta['cfg_path'],
-             "--load_detectron", meta['weight_path'],
+             "--load_ckpt", ckpt_path,
              "--multi-gpu-testing",
              "--output_dir", meta['meta_dir']]):
         print(line)
@@ -254,6 +294,7 @@ def run_test(meta, training_uuid=None):
         test_run['datetime'] = time.strftime("%c")
         test_run['uuid'] = str(uuid.uuid4())
         test_run['logs'] = []
+        #test_run['tf_logfile'] = ""
 
         if training_uuid is not None:
             test_run['linked_training_run'] = training_uuid
@@ -261,6 +302,7 @@ def run_test(meta, training_uuid=None):
         test_run['logs'].append(script_output)
 
         meta['test_runs'].append(test_run)
+        meta['latest_test_run'] = test_run['uuid']
 
         meta_filename = os.path.join(meta_base_dir, meta['net_name'], meta['net_name'] + '.json')
         save_meta(meta_filename, meta)
