@@ -219,8 +219,11 @@ def run_training(meta):
         training_run['logs'] = [script_output]
 
         output_path = _extract_training_output_paths(script_output)
+        print("Output path: " + output_path)
         split_path = os.path.split(output_path)
+        print("Split path: " + split_path)
         step_name = split_path[-3]
+        print("step_name: " + step_name)
 
         path_to_step_dir = os.path.join(meta['net_name'], step_name)
         files_in_step_dir = os.listdir(path_to_step_dir)
