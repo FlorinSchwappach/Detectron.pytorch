@@ -129,8 +129,9 @@ def get_path_to_cfg(model_name):
     return yaml_dir + baseline_model_names[model_name] + '.yaml'
 
 def save_meta(filename, net_meta):
-     with open(filename, 'w') as outfile:
-        json.dump(net_meta, outfile)
+    with open(filename, 'w') as outfile:
+        json.dump(net_meta, outfile, sort_keys=True, indent=4, separators=(',', ': '))
+    outfile.close()
 
 
 def create_new_net_meta(args):
