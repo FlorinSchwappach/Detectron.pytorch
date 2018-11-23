@@ -94,7 +94,7 @@ if __name__ == '__main__':
         cfg.TEST.DATASETS = ('keypoints_coco_2017_val',)
         cfg.MODEL.NUM_CLASSES = 2
     elif args.dataset == "pens":
-        cfg.TEST.DATASETS = ('pens_test',)
+        cfg.TEST.DATASETS = ('pens_eval',)
         cfg.MODEL.NUM_CLASSES = 2
     else:  # For subprocess call
         assert cfg.TEST.DATASETS, 'cfg.TEST.DATASETS shouldn\'t be empty'
