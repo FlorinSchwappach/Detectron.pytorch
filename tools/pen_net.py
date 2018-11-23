@@ -60,12 +60,11 @@ def parse_args():
     parser.add_argument(
             '--list_meta', action='store_true', dest='list_meta', required=False, help='')
 
-
     parser.add_argument(
             '--list_baseline_models', action='store_true', dest='list_baselines', required=False, help='')
 
-    parser.add_argument(
-            '--plot', dest='plot_type', required=False, help='')
+    #parser.add_argument(
+    #        '--plot', dest='plot_type', required=False, help='')
 
     return parser.parse_args()
 
@@ -167,6 +166,8 @@ def create_new_net_meta(args):
     net_meta['test_runs'] = []
     net_meta['uuid'] = str(uuid.uuid4())
     net_meta['cfg_path'] = new_cfg_path
+    net_meta['latest_training_run'] = ""
+    net_meta['latest_test_run'] = ""
 
     meta_filename = os.path.join(meta_path, net_name + '.json')
     save_meta(meta_filename, net_meta)
@@ -190,6 +191,12 @@ def run_shell_command(command):
             break
     pass
 
+def _get_latest_ckpt_path(meta):
+    assert(meta['latest_training_run'])
+    for run in meta['training_runs']:
+        if run['uuid'] == meta['latest_training_run']:
+            return run['ckpt_path']
+    return None
 
 def run_training(meta):
     script_output = []
@@ -198,12 +205,18 @@ def run_training(meta):
     #sys.stdout = outputlog
     sys.stderr = errorlog
 
+    load_command = "--load_detectron"
+    load_path = meta['weight_path']
+    if meta['latest_training_run']:
+        load_command = "--load_ckpt"
+        load_path = _get_latest_ckpt_path(meta)
+
     for line in run_shell_command(
             ["python",
             tool_dir + "train_net_step.py",
             "--dataset", "pens",
             "--cfg", meta['cfg_path'],
-            "--load_detectron", meta['weight_path'],
+            load_command, load_path,
             "--use_tfboard",
             # "--nw", 1,
             "--set",
