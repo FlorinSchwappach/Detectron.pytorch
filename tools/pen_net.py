@@ -165,7 +165,6 @@ def create_new_net_meta(args):
     net_meta['training_runs'] = []
     net_meta['test_runs'] = []
     net_meta['uuid'] = str(uuid.uuid4())
-    net_meta['logs'] = []
     net_meta['cfg_path'] = new_cfg_path
 
     meta_filename = os.path.join(meta_path, net_name + '.json')
@@ -189,6 +188,7 @@ def run_shell_command(command):
             print("Return Code " + str(retcode))
             break
     pass
+
 
 def run_training(meta):
     script_output = []
@@ -223,7 +223,7 @@ def run_training(meta):
         split_path = output_path.split('/')
         step_name = split_path[-3]
 
-        files_in_step_dir = os.listdir('/'.join(split_path[:-1]))
+        files_in_step_dir = os.listdir('/'.join(split_path[:-2]))
 
         # extract name of tensorboard logfile
         logfile = ""
@@ -249,6 +249,7 @@ def run_training(meta):
 
     pass
 
+
 def _extract_training_output_paths(script_output):
     output_string = ''.join(script_output)
     search_string = 'save model: '
@@ -259,6 +260,7 @@ def _extract_training_output_paths(script_output):
     output_path = output_string[wanted_index + len(search_string):]
     return output_path
 
+
 def _get_latest_training_checkpoint(meta):
     latest_run = None
     for run in meta['training_runs']:
@@ -267,9 +269,9 @@ def _get_latest_training_checkpoint(meta):
             break
     return latest_run['ckpt_path']
 
+
 def run_test(meta, training_uuid=None):
     script_output = []
-
 
     latest_checkpoint = _get_latest_training_checkpoint(meta)
     ckpt_path = os.path.join(meta['meta_dir'], latest_checkpoint)
