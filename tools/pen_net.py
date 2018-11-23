@@ -220,13 +220,10 @@ def run_training(meta):
 
         output_path = _extract_training_output_paths(script_output)
         print("Output path: " + output_path)
-        split_path = os.path.split(output_path)
-        print("Split path: " + split_path)
+        split_path = output_path.split('/')
         step_name = split_path[-3]
-        print("step_name: " + step_name)
 
-        path_to_step_dir = os.path.join(meta['net_name'], step_name)
-        files_in_step_dir = os.listdir(path_to_step_dir)
+        files_in_step_dir = os.listdir('/'.join(split_path[:-1]))
 
         # extract name of tensorboard logfile
         logfile = ""
@@ -235,7 +232,7 @@ def run_training(meta):
                 logfile = filename
                 break
 
-        training_run['tf_logfile'] = os.path.join(path_to_step_dir, logfile)
+        training_run['tf_logfile'] = os.path.join(meta['net_name'], logfile)
         training_run['ckpt_path'] = output_path
 
         meta['training_runs'].append(training_run)
