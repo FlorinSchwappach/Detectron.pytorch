@@ -96,6 +96,9 @@ if __name__ == '__main__':
     elif args.dataset == "pens":
         cfg.TEST.DATASETS = ('pens_eval',)
         cfg.MODEL.NUM_CLASSES = 2
+    elif args.dataset == "pen_tips":
+        cfg.TEST.DATASETS = ('pen_tips_eval',)
+        cfg.MODEL.NUM_CLASSES = 3
     else:  # For subprocess call
         assert cfg.TEST.DATASETS, 'cfg.TEST.DATASETS shouldn\'t be empty'
     assert_and_infer_cfg()

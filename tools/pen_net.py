@@ -56,6 +56,9 @@ def parse_args():
     parser.add_argument(
             '--meta', dest='meta_file', required=False, help='')
 
+    parser.add_argument(
+            '--dataset', dest='dataset', nargs='?', const="pens", default="pens", required=False, help='')
+
     # optional arguments
     parser.add_argument(
             '--list_meta', action='store_true', dest='list_meta', required=False, help='')
@@ -157,6 +160,7 @@ def create_new_net_meta(args):
     sh.cp(baseline_weight_path, new_weight_path)
 
     net_meta = {}
+    net_meta['dataset'] = args.dataset
     net_meta['net_name'] = net_name
     net_meta['meta_dir'] = meta_path
     net_meta['baseline_weight_path'] = baseline_weight_path
@@ -214,7 +218,7 @@ def run_training(meta):
     for line in run_shell_command(
             ["python",
             tool_dir + "train_net_step.py",
-            "--dataset", "pens",
+            "--dataset", meta['dataset'],
             "--cfg", meta['cfg_path'],
             load_command, load_path,
             "--use_tfboard",
@@ -293,7 +297,7 @@ def run_test(meta, training_uuid=None):
     for line in run_shell_command(
             ["python",
              tool_dir + "test_net.py",
-             "--dataset", "pens",
+             "--dataset", meta['dataset'],
              "--cfg", meta['cfg_path'],
              "--load_ckpt", ckpt_path,
              "--multi-gpu-testing",

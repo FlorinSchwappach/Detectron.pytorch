@@ -159,6 +159,9 @@ def main():
     elif args.dataset == "pens":
         cfg.TRAIN.DATASETS = ('pens_train',)
         cfg.MODEL.NUM_CLASSES = 2
+    elif args.dataset == "pen_tips":
+        cfg.TRAIN.DATASETS = ('pen_tips_train',)
+        cfg.MODEL.NUM_CLASSES = 3
     else:
         raise ValueError("Unexpected args.dataset: {}".format(args.dataset))
 
@@ -339,7 +342,7 @@ def main():
 
         # if we train our 2-class-set, we need to cut some layers which depend on
         # COCO class count
-        if args.dataset == "pens":
+        if args.dataset == "pens" or args.dataset == "pen_tips":
             load_detectron_weight_cut(maskRCNN, args.load_detectron,
                                   exclude=['cls_score_w', 'cls_score_b', 'bbox_pred_w', 'bbox_pred_b',
                                            'mask_fcn_logits_w', 'mask_fcn_logits_b'])

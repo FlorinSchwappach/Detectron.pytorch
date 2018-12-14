@@ -234,5 +234,11 @@ DATASETS = {
             _DATA_DIR + '/pens/images/val',
         ANN_FN:
             _DATA_DIR + '/pens/annotations/pens_val.json'
+    },
+    'pen_tips_train': {
+        IM_DIR:
+            _DATA_DIR + '/pens_train/images',
+        ANN_FN:
+            _DATA_DIR + '/pen_tips_train/annotations/pen_tips_train.json'
     }
 }
