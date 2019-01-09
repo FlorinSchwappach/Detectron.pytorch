@@ -38,6 +38,9 @@ logging.getLogger('roi_data.loader').setLevel(logging.INFO)
 rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
 resource.setrlimit(resource.RLIMIT_NOFILE, (4096, rlimit[1]))
 
+PEN_TIPS_DATASET = "pen_tips_train"
+PEN_ONLY_DATASET = "pens_train"
+
 def parse_args():
     """Parse input arguments"""
     parser = argparse.ArgumentParser(description='Train a X-RCNN network')
@@ -156,11 +159,11 @@ def main():
     elif args.dataset == "keypoints_coco2017":
         cfg.TRAIN.DATASETS = ('keypoints_coco_2017_train',)
         cfg.MODEL.NUM_CLASSES = 2
-    elif args.dataset == "pens":
+    elif args.dataset == PEN_ONLY_DATASET:
         cfg.TRAIN.DATASETS = ('pens_train',)
         cfg.MODEL.NUM_CLASSES = 2
-    elif args.dataset == "pen_tips_train":
-        cfg.TRAIN.DATASETS = ('pen_tips_train',)
+    elif args.dataset == PEN_TIPS_DATASET:
+        cfg.TRAIN.DATASETS = (PEN_TIPS_DATASET,)
         cfg.MODEL.NUM_CLASSES = 3
     else:
         raise ValueError("Unexpected args.dataset: {}".format(args.dataset))
@@ -342,7 +345,7 @@ def main():
 
         # if we train our 2-class-set, we need to cut some layers which depend on
         # COCO class count
-        if args.dataset == "pens" or args.dataset == "pen_tips":
+        if args.dataset == PEN_ONLY_DATASET or args.dataset == PEN_TIPS_DATASET:
             load_detectron_weight_cut(maskRCNN, args.load_detectron,
                                   exclude=['cls_score_w', 'cls_score_b', 'bbox_pred_w', 'bbox_pred_b',
                                            'mask_fcn_logits_w', 'mask_fcn_logits_b'])
