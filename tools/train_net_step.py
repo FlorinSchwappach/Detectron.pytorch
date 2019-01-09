@@ -159,7 +159,7 @@ def main():
     elif args.dataset == "pens":
         cfg.TRAIN.DATASETS = ('pens_train',)
         cfg.MODEL.NUM_CLASSES = 2
-    elif args.dataset == "pen_tips":
+    elif args.dataset == "pen_tips_train":
         cfg.TRAIN.DATASETS = ('pen_tips_train',)
         cfg.MODEL.NUM_CLASSES = 3
     else:
