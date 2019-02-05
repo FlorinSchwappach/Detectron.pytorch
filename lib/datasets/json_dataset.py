@@ -257,6 +257,11 @@ class JsonDataset(object):
 
         im_has_visible_keypoints = False
         for ix, obj in enumerate(valid_objs):
+            print("================================")
+            print(valid_objs)
+            print(ix)
+            print(obj)
+            print("================================")
             cls = self.json_category_id_to_contiguous_id[obj['category_id']]
             boxes[ix, :] = obj['clean_bbox']
             gt_classes[ix] = cls
