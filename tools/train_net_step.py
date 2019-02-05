@@ -237,6 +237,10 @@ def main():
 
     ### Dataset ###
     timers['roidb'].tic()
+    print("###########################################")
+    print(cfg.TRAIN.DATASETS)
+    print(cfg.TRAIN.PROPOSAL_FILES)
+    print("###########################################")
     roidb, ratio_list, ratio_index = combined_roidb_for_training(
         cfg.TRAIN.DATASETS, cfg.TRAIN.PROPOSAL_FILES)
     timers['roidb'].toc()
