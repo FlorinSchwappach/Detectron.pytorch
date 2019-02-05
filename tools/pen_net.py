@@ -301,6 +301,7 @@ def run_test(meta, training_uuid=None):
              "--cfg", meta['cfg_path'],
              "--load_ckpt", ckpt_path,
              "--multi-gpu-testing",
+             "--vis",
              "--output_dir", meta['meta_dir']]):
         print(line)
         script_output.append(line)

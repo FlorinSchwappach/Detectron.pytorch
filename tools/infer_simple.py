@@ -98,6 +98,12 @@ def main():
     elif args.dataset.startswith("keypoints_coco"):
         dataset = datasets.get_coco_dataset()
         cfg.MODEL.NUM_CLASSES = 2
+    elif args.dataset.startswith("pen_tips"):
+        dataset = datasets.get_pen_tips_dataset()
+        cfg.MODEL.NUM_CLASSES = 3
+        cfg.TEST.RPN_NMS_THRESH = 2.0
+        #cfg.TEST.BBOX_VOTE.VOTE_TH = 0.4
+        cfg.VIS_TH = 0.4
     else:
         raise ValueError('Unexpected dataset name: {}'.format(args.dataset))
 

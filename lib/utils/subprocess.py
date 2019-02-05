@@ -63,8 +63,15 @@ def process_in_parallel(
     else:
         gpu_inds = range(cfg.NUM_GPUS)
     gpu_inds = list(gpu_inds)
+    print("NUM GPUS")
+    print(NUM_GPUS)
+    print("GPU INDS")
+    print(gpu_inds)
     # Run the binary in cfg.NUM_GPUS subprocesses
+    print("SUB INDS")
+    print(subinds)
     for i, gpu_ind in enumerate(gpu_inds):
+        print(i)
         start = subinds[i][0]
         end = subinds[i][-1] + 1
         subprocess_env['CUDA_VISIBLE_DEVICES'] = str(gpu_ind)

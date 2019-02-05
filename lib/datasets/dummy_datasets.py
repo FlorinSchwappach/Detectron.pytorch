@@ -45,3 +45,12 @@ def get_coco_dataset():
     ]
     ds.classes = {i: name for i, name in enumerate(classes)}
     return ds
+
+
+def get_pen_tips_dataset():
+    """A dummy COCO dataset that includes only the 'classes' field."""
+    ds = AttrDict()
+    classes = [
+        '__background__', 'pen', 'pen_tip']
+    ds.classes = {i: name for i, name in enumerate(classes)}
+    return ds
