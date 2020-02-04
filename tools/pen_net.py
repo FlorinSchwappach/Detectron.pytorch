@@ -33,7 +33,8 @@ tool_dir = os.path.expanduser("~/Detectron.pytorch/tools/")
 # X-152-...-IN5k: ResNeXt model trained on ImageNet-5k
 baseline_model_names = {"e2e_50_c4_1" : "e2e_mask_rcnn_R-50-C4_1x",   
                 "rcnn_50_c4_1" : "mask_rcnn_R-50-C4_1x",
-                "e2e_101_fpn_2" : "e2e_mask_rcnn_X-101-32x8d-FPN_2x",
+                "e2e_101_fpn_2": "e2e_mask_rcnn_R-101-FPN_2x",
+                "e2e_101_x_fpn_2" : "e2e_mask_rcnn_X-101-32x8d-FPN_2x",
                 "e2e_152_fpn_144" : "e2e_mask_rcnn_X-152-32x8d-FPN-IN5k_1.44x"}
 
 ###############################################################################

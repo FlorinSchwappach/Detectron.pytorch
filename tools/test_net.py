@@ -96,7 +96,7 @@ if __name__ == '__main__':
     elif args.dataset == "pens":
         cfg.TEST.DATASETS = ('pens_eval',)
         cfg.MODEL.NUM_CLASSES = 2
-    elif args.dataset == "pen_tips":
+    elif args.dataset == "pen_tips_train":
         cfg.TEST.DATASETS = ('pen_tips_eval',)
         cfg.MODEL.NUM_CLASSES = 3
     else:  # For subprocess call
